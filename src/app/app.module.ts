@@ -11,6 +11,7 @@ import {ExcisePageModule} from "../pages/excise/excise.module";
 import {CountyPageModule} from "../pages/county/county.module";
 import {HttpClientModule} from "@angular/common/http";
 import {ChartModule} from "angular2-highcharts";
+import {HTTP} from "@ionic-native/http";
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import {ChartModule} from "angular2-highcharts";
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
-    NetworkProvider
+    NetworkProvider,
+    HTTP
   ]
 })
 export class AppModule {}

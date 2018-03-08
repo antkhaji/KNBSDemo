@@ -2,6 +2,8 @@ import {ToastController} from "ionic-angular";
 
 export let Utils = {
 
+  baseUrl: "http://156.0.232.97:8000/",
+
   handleNetworkError: (toastCtl: ToastController, error: any) => {
 
     let message = "An unexpected error occurred. Please try again.";

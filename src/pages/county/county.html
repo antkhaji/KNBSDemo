@@ -63,7 +63,7 @@
 
     </ion-row>
 
-    <div padding>
+    <div padding *ngIf="!!county">
       <ion-segment [(ngModel)]="chartType">
         <ion-segment-button value="line">
           Line

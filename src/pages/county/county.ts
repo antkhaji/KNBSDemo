@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
-import * as HighCharts from 'highcharts';
+import {IonicPage, NavController, NavParams, Platform, ToastController} from 'ionic-angular';
 import {Utils} from "../../util/Utils";
 import {NetworkProvider} from "../../providers/network/network";
 import * as _ from 'lodash';
+import {HTTP} from "@ionic-native/http";
 
 /**
  * Generated class for the CountyPage page.
@@ -32,7 +32,9 @@ export class CountyPage {
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public networkProvider: NetworkProvider,
-              public toastCtlr: ToastController) {
+              public toastCtlr: ToastController,
+              public platform: Platform,
+              public http: HTTP) {
   }
 
   ionViewDidLoad() {
@@ -44,19 +46,30 @@ export class CountyPage {
 
     this.isLoading = true;
 
-    this.networkProvider.getAllCountyAllocation().subscribe(
-      response => {
+    if (this.platform.is("cordova")) {
 
-        this.isLoading = false;
-        this.data = response as Array<any>;
-        this.getCounties()
-      },
-      error => {
+      let url = `${Utils.baseUrl}finance/all_county_allocation`;
 
-        this.isLoading = false;
-        Utils.handleNetworkError(this.toastCtlr, error);
-      }
-    );
+      this.http.get(url, {}, {})
+        .then(data => this.postRequestHandler(JSON.parse(data.data)))
+        .catch(error => {
+          this.isLoading = false;
+          Utils.handleNetworkError(this.toastCtlr, error)
+        })
+
+    } else {
+      this.networkProvider.getAllCountyAllocation().subscribe(
+        response => {
+
+          this.postRequestHandler(response)
+        },
+        error => {
+
+          this.isLoading = false;
+          Utils.handleNetworkError(this.toastCtlr, error);
+        }
+      );
+    }
   }
 
   getCounties() {
@@ -131,5 +144,11 @@ export class CountyPage {
       }],
       legend: {}
     };
+  }
+
+  postRequestHandler(response) {
+    this.isLoading = false;
+    this.data = response as Array<any>;
+    this.getCounties()
   }
 }

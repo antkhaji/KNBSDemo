@@ -1,9 +1,9 @@
 import {Component} from '@angular/core';
-import {IonicPage, NavController, NavParams, ToastController} from 'ionic-angular';
-import * as HighCharts from 'highcharts';
+import {IonicPage, NavController, NavParams, Platform, ToastController} from 'ionic-angular';
 import {NetworkProvider} from "../../providers/network/network";
 import {Utils} from "../../util/Utils";
 import * as _ from 'lodash';
+import {HTTP} from "@ionic-native/http";
 
 /**
  * Generated class for the ExcisePage page.
@@ -29,7 +29,9 @@ export class ExcisePage {
   constructor(public navCtrl: NavController,
               public navParams: NavParams,
               public networkProvider: NetworkProvider,
-              public toastCtlr: ToastController) {
+              public toastCtlr: ToastController,
+              public http: HTTP,
+              public platform: Platform) {
   }
 
   ionViewDidLoad() {
@@ -40,95 +42,113 @@ export class ExcisePage {
 
     this.isLoading = true;
 
-    this.networkProvider.getExciseRevenue().subscribe(
-      response => {
+    if (this.platform.is("cordova")) {
 
-        this.isLoading = false;
-        this.data = response as Array<any>;
+      let url = `${Utils.baseUrl}finance/all_excise_revenue`;
 
-        this.lineOptions = {
-          title: {
-            text: "Excise Revenue Commodity",
-            subtitle: "Line graph"
-          },
-          yAxis: {
-            title: {
-              text: 'Revenue'
-            },
-          },
-          credits: {
-            enabled: false
-          },
-          plotOptions: {
-            series: {
-              label: {
-                connectorAllowed: false
-              },
-              pointStart: 2009
-            }
-          },
-          series: [{
-            name: 'Beer',
-            data: _.map(this.data, "beer")
-          }, {
-            name: 'Cigarettes',
-            data: _.map(this.data, "cigarettes")
-          }, {
-            name: 'Waters',
-            data: _.map(this.data, "waters")
-          }, {
-            name: 'Spirits',
-            data: _.map(this.data, "spirits")
-          }, {
-            name: 'Commodities',
-            data: _.map(this.data, "commodities")
-          }],
-        };
+      this.http.get(url, {}, {})
+        .then(data => this.postRequestHandler(JSON.parse(data.data)))
+        .catch(error => {
+          this.isLoading = false;
+          Utils.handleNetworkError(this.toastCtlr, error)
+        })
 
-        this.barOptions = {
-          chart: {
-            type: 'column'
-          },
-          title: {
-            text: "Excise Revenue Commodity",
-            subtitle: "Bar graph"
-          },
-          xAxis: {
-            categories: _.map(this.data, "year")
-          },
-          yAxis: {
-            title: {
-              text: "Revenue"
-            }
-          },
-          credits: {
-            enabled: false
-          },
-          series: [{
-            name: 'Beer',
-            data: _.map(this.data, "beer")
-          }, {
-            name: 'Cigarettes',
-            data: _.map(this.data, "cigarettes")
-          }, {
-            name: 'Waters',
-            data: _.map(this.data, "waters")
-          }, {
-            name: 'Spirits',
-            data: _.map(this.data, "spirits")
-          }, {
-            name: 'Commodities',
-            data: _.map(this.data, "commodities")
-          }],
-          legend: {}
-        };
+    } else {
 
+      this.networkProvider.getExciseRevenue().subscribe(
+        response => {
+
+          this.postRequestHandler(response);
+        },
+        error => {
+
+          this.isLoading = false;
+          Utils.handleNetworkError(this.toastCtlr, error);
+        }
+      );
+    }
+  }
+
+  postRequestHandler(response) {
+
+    this.isLoading = false;
+    this.data = response as Array<any>;
+
+    this.lineOptions = {
+      title: {
+        text: "Excise Revenue Commodity",
+        subtitle: "Line graph"
       },
-      error => {
+      yAxis: {
+        title: {
+          text: 'Revenue'
+        },
+      },
+      credits: {
+        enabled: false
+      },
+      plotOptions: {
+        series: {
+          label: {
+            connectorAllowed: false
+          },
+          pointStart: 2009
+        }
+      },
+      series: [{
+        name: 'Beer',
+        data: _.map(this.data, "beer")
+      }, {
+        name: 'Cigarettes',
+        data: _.map(this.data, "cigarettes")
+      }, {
+        name: 'Waters',
+        data: _.map(this.data, "waters")
+      }, {
+        name: 'Spirits',
+        data: _.map(this.data, "spirits")
+      }, {
+        name: 'Commodities',
+        data: _.map(this.data, "commodities")
+      }],
+    };
 
-        this.isLoading = false;
-        Utils.handleNetworkError(this.toastCtlr, error);
-      }
-    );
+    this.barOptions = {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: "Excise Revenue Commodity",
+        subtitle: "Bar graph"
+      },
+      xAxis: {
+        categories: _.map(this.data, "year")
+      },
+      yAxis: {
+        title: {
+          text: "Revenue"
+        }
+      },
+      credits: {
+        enabled: false
+      },
+      series: [{
+        name: 'Beer',
+        data: _.map(this.data, "beer")
+      }, {
+        name: 'Cigarettes',
+        data: _.map(this.data, "cigarettes")
+      }, {
+        name: 'Waters',
+        data: _.map(this.data, "waters")
+      }, {
+        name: 'Spirits',
+        data: _.map(this.data, "spirits")
+      }, {
+        name: 'Commodities',
+        data: _.map(this.data, "commodities")
+      }],
+      legend: {}
+    };
   }
 }
