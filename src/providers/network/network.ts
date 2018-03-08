@@ -1,5 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
+import {Platform} from "ionic-angular";
 
 /*
   Generated class for the NetworkProvider provider.
