@@ -1,5 +1,6 @@
 import {HttpClient} from '@angular/common/http';
 import {Injectable} from '@angular/core';
+import {Platform} from "ionic-angular";
 
 /*
   Generated class for the NetworkProvider provider.
@@ -10,11 +11,11 @@ import {Injectable} from '@angular/core';
 @Injectable()
 export class NetworkProvider {
 
-  baseUrl: string = "";//"http://156.0.232.97:8000";
+  baseUrl: string = "/";//"http://156.0.232.97:8000";
 
   constructor(public http: HttpClient, public platform: Platform) {
     console.log('Hello NetworkProvider Provider');
-    if (this.platform.is("cordova")) this.baseUrl = "http://156.0.232.97:8000";
+    if (this.platform.is("cordova")) this.baseUrl = "http://156.0.232.97:8000/";
   }
 
   getExciseRevenue() {
