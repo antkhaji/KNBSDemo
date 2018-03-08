@@ -1,0 +1,89 @@
+<!--
+  Generated template for the CountyPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar>
+
+    <button ion-button icon-only menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+
+    <ion-title>County Allocation</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+
+  <ion-row *ngIf="data.length === 0 && !isLoading" no-available>
+    <ion-col>
+
+      <h3 text-center>{{ errorMessage }}</h3>
+
+      <button (click)="loadData()" ion-button clear full icon-left color="homeTextColor">
+        <ion-icon name="refresh"></ion-icon>
+        Refresh
+      </button>
+
+    </ion-col>
+  </ion-row>
+
+  <ion-row *ngIf="isLoading" loading>
+
+    <ion-col>
+
+      <div text-center padding margin-top style="line-height: 200%; padding: 40px;">
+        <p>
+          <ion-spinner color="homeTextColor"></ion-spinner>
+        </p>
+        <p>Loading...</p>
+      </div>
+
+    </ion-col>
+
+  </ion-row>
+
+  <div *ngIf="!isLoading && data.length > 0">
+
+    <ion-row>
+
+      <ion-col>
+        <ion-item>
+          <ion-label>Select County</ion-label>
+          <ion-select [(ngModel)]="county" (ionChange)="countySelected()">
+            <ion-option *ngFor="let option of countyOptions" [value]="option">{{option}}</ion-option>
+          </ion-select>
+        </ion-item>
+      </ion-col>
+
+    </ion-row>
+
+    <div padding>
+      <ion-segment [(ngModel)]="chartType">
+        <ion-segment-button value="line">
+          Line
+        </ion-segment-button>
+        <ion-segment-button value="bar">
+          Bar
+        </ion-segment-button>
+      </ion-segment>
+    </div>
+
+    <div [ngSwitch]="chartType">
+      <div *ngSwitchCase="'line'">
+        <chart [options]="lineOptions" style="display: block;"></chart>
+      </div>
+
+      <div *ngSwitchCase="'bar'">
+        <chart [options]="barOptions" style="display: block;"></chart>
+      </div>
+    </div>
+
+  </div>
+
+</ion-content>

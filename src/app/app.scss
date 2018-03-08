@@ -14,3 +14,23 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+[loading] {
+
+  p {
+    color: map-get($colors, homeTextColor);
+  }
+
+}
+
+[no-available] {
+
+  h3 {
+    color: map-get($colors, homeTextColor) !important;
+    font-size: 16px;
+    margin: 40px 0 !important;
+  }
+
+  button {
+    font-family: ubuntu-regular, sans-serif;
+  }
+}
